@@ -3,31 +3,10 @@ import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import DatePicker from 'material-ui/DatePicker';
 import TextField from 'material-ui/TextField';
 require("react-big-calendar/lib/css/react-big-calendar.css");
 
 BigCalendar.momentLocalizer(moment);
-
-var myEventsList = [{
-    'title': 'Conference',
-    'start': moment(new Date(2018, 3, 10, 10, 30, 0, 0)).format("MMMM Do YYYY"),
-    'end': new Date(2018, 3, 10),
-    desc: 'Big conference for important people'
-},
-{
-    'title': 'Meeting',
-    'start': new Date(2018, 3, 12, 10, 30, 0, 0),
-    'end': new Date(2018, 3, 12, 12, 30, 0, 0),
-    desc: 'Pre-meeting meeting, to prepare for the meeting'
-},
-{
-    'title': 'Lunch',
-    'start': new Date(2018, 3, 13, 10, 30, 0, 0),
-    'end': new Date(2017, 3, 14, 10, 0, 0, 0),
-    desc: 'Power lunch'
-}]
 
 class Calendar extends Component {
     constructor() {
@@ -38,78 +17,112 @@ class Calendar extends Component {
                 start: new Date(),
                 end: new Date(),
                 desc: "It always have an appointment on the current day"
-            }],
-            'title': "",
-            'start': "",
-            'end': "",
-            description: "",
+            }
+            ],
+            title: "",
+            start: "",
+            end: "",
+            desc: "",
             openSlot: false,
             openEvent: false,
+            clickedEvent: {},
             selectedEventTitle: "",
-            selectedEventDescription: ""
+            selectedEventDescription: "",
+            selectedEventStart: ""
         }
         this.handleClose = this.handleClose.bind(this);
     }
 
+    //  After creating a new appointment and adding it to event array, Array gets converted to a single number datatype by unforseen action which breaks code.
+    //  This lifecycle converts it back to original array before rendering is triggered.
+    componentWillUpdate(nextProps, nextState) {
+        // console.log( "Component will update", nextState.events, this.state.events)
+        if (typeof nextState.events !== 'object' || nextState.events.constructor !== Array) {
+            nextState.events = this.state.events;
+        }
+    }
+
     //closes modals
     handleClose() {
-        console.log("FIRED CLOSE")
         this.setState({ openEvent: false, openSlot: false });
-        console.log(this.state.events)
     }
 
     //Allows user to click on calendar slot
     handleSlotSelected(slotInfo) {
+        // console.log(slotInfo)
+        // var startDate = moment(slotInfo.start.toLocaleString('en-US')).format("MMMM Do YYYY, h:mm:ss a");
+        // var endDate = moment(slotInfo.end.toLocaleString('en-US')).format("MMMM Do YYYY, h:mm:ss a");
         console.log(slotInfo)
-        var startDate = moment(slotInfo.start.toLocaleString('en-US')).format("MMMM Do YYYY");
-        var endDate = moment(slotInfo.end.toLocaleString('en-US')).format("MMMM Do YYYY");
+        console.log(this.state.events)
+        let hasEvent = this.state.events.some(event => event['start'] === slotInfo.start);
+        console.log(hasEvent)
+        if (hasEvent) {
+            return alert("Appointment exists")
+        }
         this.setState({
             openSlot: true,
-            'start': startDate,
-            'end': endDate
+            start: slotInfo.start,
+            end: slotInfo.end
         });
-        console.log('startTime', this.state.start);
-        console.log('endTime', this.state.end);
+        // console.log('startTime', this.state.start);
+        // console.log('endTime', this.state.end);
     }
 
     handleEventSelected(event) {
-        console.log(event) //Shows the event details provided while booking
+        console.log("event", event) //Shows the event details provided while booking
         this.setState({
             openEvent: true,
+            clickedEvent: event,
             selectedEventTitle: event.title,
-            selectedEventDescription: event.desc
+            selectedEventDescription: event.desc,
+            selectedEventStart: event.start
         })
+        console.log(this.state.selectedEventTitle)
 
     }
 
     setTitle(e) {
         this.setState({ title: e })
-        console.log(this.state.title)
     }
 
     setDescription(e) {
-        this.setState({ description: e })
+        this.setState({ desc: e })
     }
 
     setAppointment() {
-        console.log("Fired")
-        const { start, end, title, description } = this.state;
+        // console.log("Fired")
+        const { start, end, title, desc } = this.state;
         let appointment = {
-            'title': title,
-            'start': new Date(start),
-            'end': new Date(end),
-            description
+            title,
+            start,
+            end,
+            desc
         }
         this.setState({ events: this.state.events.push(appointment) })
+        // console.log("appointment set", this.state.events)
     }
 
     updateEvent() {
+        const index = this.state.events.findIndex(event => event === this.state.clickedEvent)
+        console.log("index", index);
+        const newArr = this.state.events.slice();
+        newArr[index].title = this.state.title;
+        newArr[index].desc = this.state.desc;
+        console.log("updated Event",newArr,)
+        console.log("Spliced event", this.state.events.splice(index, 1, newArr))
         this.setState({
-
+            events: newArr
         })
     }
 
+    deleteEvent() {
+        //  filters out specific event that is to be deleted and set to a variable
+        let updatedEvents = this.state.events.filter(event=> event["start"] !== this.state.selectedEventStart);
+        this.setState({events: updatedEvents})
+    }
+
     render() {
+        console.log("render()")
         const eventActions = [
             <FlatButton
                 label="Cancel"
@@ -121,13 +134,14 @@ class Calendar extends Component {
                 label="Delete"
                 primary={true}
                 keyboardFocused={true}
-                onClick={this.handleClose}
+                onClick={() => {this.deleteEvent(),this.handleClose()}}
             />,
             <FlatButton
                 label="Confirm Edit"
                 primary={true}
                 keyboardFocused={true}
                 onClick={this.handleClose}
+                onClick={() => {this.updateEvent(), this.handleClose()}}
             />
         ];
         const appointmentActions = [
@@ -135,6 +149,7 @@ class Calendar extends Component {
                 label="Cancel"
                 primary={false}
                 onClick={this.handleClose}
+                
             />,
             <FlatButton
                 label="Submit"
@@ -148,7 +163,7 @@ class Calendar extends Component {
                 <BigCalendar
                     events={this.state.events}
                     views={["month", "week", "day"]}
-                    timeslots={1}
+                    timeslots={2}
                     defaultView='month'
                     defaultDate={new Date()}
                     selectable={true}
@@ -158,7 +173,7 @@ class Calendar extends Component {
 
                 {/* Modal for booking new appointment */}
                 <Dialog
-                    title={`Book an appointment on ${this.state.start}`} 
+                    title={`Book an appointment on ${this.state.start}`}
                     actions={appointmentActions}
                     modal={false}
                     open={this.state.openSlot}
@@ -177,7 +192,7 @@ class Calendar extends Component {
 
                 {/* Modal for Existing Event */}
                 <Dialog
-                    title="View/Edit Appointment"
+                    title={`View/Edit Appointment on ${this.state.selectedEventStart}`}
                     actions={eventActions}
                     modal={false}
                     open={this.state.openEvent}
