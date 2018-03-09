@@ -2,7 +2,13 @@
   "name": "calendar-schedule",
   "version": "0.1.0",
   "private": true,
+  "main": "./server/server.js",
+  "proxy": "http://localhost:3017",
   "dependencies": {
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.2",
     "material-ui": "^0.20.0",
     "moment": "^2.21.0",
     "react": "^16.2.0",
