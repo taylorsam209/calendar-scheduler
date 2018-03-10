@@ -4,11 +4,13 @@
   "private": true,
   "main": "./server/server.js",
   "proxy": "http://localhost:3017",
+  "homepage": "https://taylorsam209.github.io/calendar-scheduler/",
   "dependencies": {
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "dotenv": "^5.0.1",
     "express": "^4.16.2",
+    "gh-pages": "^1.1.0",
     "material-ui": "^0.20.0",
     "moment": "^2.21.0",
     "react": "^16.2.0",
@@ -18,6 +20,8 @@
     "sweetalert": "^2.1.0"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
