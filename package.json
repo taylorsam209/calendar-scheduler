@@ -10,14 +10,16 @@
     "cors": "^2.8.4",
     "dotenv": "^5.0.1",
     "express": "^4.16.2",
-    "gh-pages": "^1.1.0",
     "material-ui": "^0.20.0",
     "moment": "^2.21.0",
     "react": "^16.2.0",
     "react-big-calendar": "^0.18.0",
     "react-dom": "^16.2.0",
-    "react-scripts": "1.1.1",
     "sweetalert": "^2.1.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^1.1.0",
+    "react-scripts": "1.1.1"
   },
   "scripts": {
     "predeploy": "npm run build",
