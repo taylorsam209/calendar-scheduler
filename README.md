@@ -13,6 +13,8 @@ Link https://taylorsam209.github.io/calendar-scheduler/
 <li>material-ui</li>
 <li>Moment JS</li>
 
+## Views
+
 <p align="center">
     <img src="https://github.com/taylorsam209/calendar-scheduler/blob/master/src/assets/calendar-front.PNG" width="700">
 </p> 
@@ -34,11 +36,23 @@ Link https://taylorsam209.github.io/calendar-scheduler/
 </p> 
 
 <p align="center">
+    Appointment editing modal
+</p> 
+
+<p align="center">
     <img src="https://github.com/taylorsam209/calendar-scheduler/blob/master/src/assets/calendar-appointment.PNG" width="700">
 </p> 
 
 <p align="center">
+    Calendar view with appointments set.
+</p> 
+
+<p align="center">
     <img src="https://github.com/taylorsam209/calendar-scheduler/blob/master/src/assets/calendar-time.PNG" width="700">
+</p>
+
+<p align="center">
+    Material-UI Time Picker
 </p> 
 
 <p align="center">
@@ -46,5 +60,13 @@ Link https://taylorsam209.github.io/calendar-scheduler/
 </p> 
 
 <p align="center">
+    Agenda view that lists all appointments
+</p> 
+
+<p align="center">
     <img src="https://github.com/taylorsam209/calendar-scheduler/blob/master/src/assets/calendar-ipad.PNG" width="700">
+</p> 
+
+<p align="center">
+    Calendar Scheduler as seen on an Ipad
 </p> 
