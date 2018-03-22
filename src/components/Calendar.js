@@ -22,10 +22,6 @@ class Calendar extends Component {
             openSlot: false,
             openEvent: false,
             clickedEvent: {},
-            selectedEventTitle: "",
-            selectedEventDescription: "",
-            selectedEventStart: "",
-            selectedEventEnd: ""
         }
         this.handleClose = this.handleClose.bind(this);
     }
@@ -38,11 +34,6 @@ class Calendar extends Component {
         }
     }
 
-    componentDidUpdate(prevState) {
-        // console.log("component DId Update - start Time", this.state.startTime)
-        // console.log("componendDidUpdate() - endTime", this.state.endTime )
-    }
-
     //closes modals
     handleClose() {
         this.setState({ openEvent: false, openSlot: false });
@@ -52,14 +43,8 @@ class Calendar extends Component {
     handleSlotSelected(slotInfo) {
         console.log("Real slotInfo", slotInfo)
         this.setState({
-            title:"", 
-            desc:"", 
-            start: "", 
-            end: ""});
-        // if(this.state.events.filter(e => e.start == startDate && e.end ==endDate).length > 0) {
-        //     swal("Appointment already exists!", "Click on appointment to view/edit event.")
-        // } else
-        this.setState({
+            title: "",
+            desc: "",
             start: slotInfo.start,
             end: slotInfo.end,
             openSlot: true,
@@ -67,14 +52,14 @@ class Calendar extends Component {
     }
 
     handleEventSelected(event) {
-        console.log("event", event) 
+        console.log("event", event)
         this.setState({
             openEvent: true,
             clickedEvent: event,
-            selectedEventTitle: event.title,
-            selectedEventDescription: event.desc,
-            selectedEventStart: event.start,
-            selectedEventEnd: event.end
+            start: event.start,
+            end: event.end,
+            title: event.title,
+            desc: event.desc
         })
     }
 
@@ -87,35 +72,29 @@ class Calendar extends Component {
     }
 
     handleStartTime = (event, date) => {
-        this.setState({start: date})
+        this.setState({ start: date })
     }
 
     handleEndTime = (event, date) => {
-        this.setState({end: date})
+        this.setState({ end: date })
     }
 
     // Onclick callback function that pushes new appointment into events array.
     setNewAppointment() {
-        // console.log("Fired")
         const { start, end, title, desc } = this.state;
-        let appointment = {
-            title,
-            start,
-            end,
-            desc
-        }
+        let appointment = { title, start, end, desc }
         this.setState({ events: this.state.events.push(appointment) })
-        // console.log("appointment set", this.state.events)
     }
 
     //  Updates Existing Appointments Title and/or Description
     updateEvent() {
-        const index = this.state.events.findIndex(event => event === this.state.clickedEvent)
-        const updatedEvent = this.state.events.slice();
-        updatedEvent[index].title = this.state.title;
-        updatedEvent[index].desc = this.state.desc;
-        updatedEvent[index].start = this.state.start;
-        updatedEvent[index].end = this.state.end;
+        const { title, desc, start, end, events, clickedEvent} = this.state;
+        const index = events.findIndex(event => event === clickedEvent)
+        const updatedEvent = events.slice();
+        updatedEvent[index].title = title;
+        updatedEvent[index].desc = desc;
+        updatedEvent[index].start = start;
+        updatedEvent[index].end = end;
         this.setState({
             events: updatedEvent
         })
@@ -123,8 +102,8 @@ class Calendar extends Component {
 
     //  filters out specific event that is to be deleted and set that variable to state
     deleteEvent() {
-        let updatedEvents = this.state.events.filter(event=> event["start"] !== this.state.selectedEventStart);
-        this.setState({events: updatedEvents})
+        let updatedEvents = this.state.events.filter(event => event["start"] !== this.state.start);
+        this.setState({ events: updatedEvents })
     }
 
     render() {
@@ -140,14 +119,14 @@ class Calendar extends Component {
                 label="Delete"
                 secondary={true}
                 keyboardFocused={true}
-                onClick={() => {this.deleteEvent(),this.handleClose()}}
+                onClick={() => { this.deleteEvent(), this.handleClose() }}
             />,
             <FlatButton
                 label="Confirm Edit"
                 primary={true}
                 keyboardFocused={true}
                 onClick={this.handleClose}
-                onClick={() => {this.updateEvent(), this.handleClose()}}
+                onClick={() => { this.updateEvent(), this.handleClose() }}
             />
         ];
         const appointmentActions = [
@@ -155,7 +134,7 @@ class Calendar extends Component {
                 label="Cancel"
                 secondary={true}
                 onClick={this.handleClose}
-                
+
             />,
             <FlatButton
                 label="Submit"
@@ -166,14 +145,14 @@ class Calendar extends Component {
         ];
         return (
             <div id="Calendar">
-            {/* react-big-calendar library utilized to render calendar*/}
+                {/* react-big-calendar library utilized to render calendar*/}
                 <BigCalendar
                     events={this.state.events}
                     views={["month", "week", "day", "agenda"]}
                     timeslots={2}
                     defaultView='month'
                     defaultDate={new Date()}
-                    selectable={'ignoreEvents'}
+                    selectable={true}
                     onSelectEvent={event => this.handleEventSelected(event)}
                     onSelectSlot={(slotInfo) => this.handleSlotSelected(slotInfo)}
                 />
@@ -188,7 +167,6 @@ class Calendar extends Component {
                 >
                     <TextField
                         floatingLabelText="Title"
-                        errorText="This field is required."
                         onChange={e => { this.setTitle(e.target.value) }}
                     />
                     <br />
@@ -198,16 +176,14 @@ class Calendar extends Component {
                     />
                     <TimePicker
                         format='ampm'
-                        floatingLabelText= "Start Time"
-                        errorText="Time is required."
+                        floatingLabelText="Start Time"
                         minutesStep={5}
                         value={this.state.start}
                         onChange={this.handleStartTime}
                     />
                     <TimePicker
                         format='ampm'
-                        floatingLabelText= "End Time"
-                        errorText="Time is required."
+                        floatingLabelText="End Time"
                         minutesStep={5}
                         value={this.state.end}
                         onChange={this.handleEndTime}
@@ -216,27 +192,26 @@ class Calendar extends Component {
 
                 {/* Material-ui Modal for Existing Event */}
                 <Dialog
-                    title={`View/Edit Appointment of ${moment(this.state.selectedEventStart).format("MMMM Do YYYY")}`}
+                    title={`View/Edit Appointment of ${moment(this.state.start).format("MMMM Do YYYY")}`}
                     actions={eventActions}
                     modal={false}
                     open={this.state.openEvent}
                     onRequestClose={this.handleClose}
                 >
                     <TextField
-                        defaultValue={this.state.selectedEventTitle}
+                        defaultValue={this.state.title}
                         floatingLabelText="Title"
                         onChange={e => { this.setTitle(e.target.value) }}
                     /><br />
                     <TextField
-                    floatingLabelText="Description"
+                        floatingLabelText="Description"
                         multiLine={true}
-                        defaultValue={this.state.selectedEventDescription}
+                        defaultValue={this.state.desc}
                         onChange={e => { this.setDescription(e.target.value) }}
                     />
-                     <TimePicker
+                    <TimePicker
                         format='ampm'
                         floatingLabelText="Start Time"
-                        hintText= {moment(this.state.selectedEventStart).format("MMMM Do YYYY")}
                         minutesStep={5}
                         value={this.state.start}
                         onChange={this.handleStartTime}
@@ -244,7 +219,6 @@ class Calendar extends Component {
                     <TimePicker
                         format='ampm'
                         floatingLabelText="End Time"
-                        hintText= {moment(this.state.selectedEventEnd).format("MMMM Do YYYY")}
                         minutesStep={5}
                         value={this.state.end}
                         onChange={this.handleEndTime}
