@@ -14,5 +14,29 @@ Link https://taylorsam209.github.io/calendar-scheduler/
 <li>Moment JS</li>
 
 <p align="center">
-    <img src="https://github.com/taylorsam209/personal-project/blob/master/src/assets/veganeats.PNG" width="700">
+    <img src="https://github.com/taylorsam209/calendar-scheduler/blob/master/src/assets/calendar-front.PNG" width="700">
+</p> 
+
+<p align="center">
+    <img src="https://github.com/taylorsam209/calendar-scheduler/blob/master/src/assets/calendar-book.PNG" width="700">
+</p> 
+
+<p align="center">
+    <img src="https://github.com/taylorsam209/calendar-scheduler/blob/master/src/assets/calendar-edit.PNG" width="700">
+</p> 
+
+<p align="center">
+    <img src="https://github.com/taylorsam209/calendar-scheduler/blob/master/src/assets/calendar-appointment.PNG" width="700">
+</p> 
+
+<p align="center">
+    <img src="https://github.com/taylorsam209/calendar-scheduler/blob/master/src/assets/calendar-time.PNG" width="700">
+</p> 
+
+<p align="center">
+    <img src="https://github.com/taylorsam209/calendar-scheduler/blob/master/src/assets/calendar-agenda.PNG" width="700">
+</p> 
+
+<p align="center">
+    <img src="https://github.com/taylorsam209/calendar-scheduler/blob/master/src/assets/calendar-ipad.PNG" width="700">
 </p> 
