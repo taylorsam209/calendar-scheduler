@@ -2,8 +2,6 @@
   "name": "calendar-schedule",
   "version": "0.1.0",
   "private": true,
-  "main": "./server/server.js",
-  "proxy": "http://localhost:3017",
   "homepage": "https://taylorsam209.github.io/calendar-scheduler/",
   "dependencies": {
     "body-parser": "^1.18.2",

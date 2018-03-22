@@ -4,6 +4,7 @@ import moment from 'moment';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
+import TimePicker from 'material-ui/TimePicker';
 import swal from 'sweetalert';
 require("react-big-calendar/lib/css/react-big-calendar.css");
 
@@ -23,7 +24,8 @@ class Calendar extends Component {
             clickedEvent: {},
             selectedEventTitle: "",
             selectedEventDescription: "",
-            selectedEventStart: ""
+            selectedEventStart: "",
+            selectedEventEnd: ""
         }
         this.handleClose = this.handleClose.bind(this);
     }
@@ -31,10 +33,14 @@ class Calendar extends Component {
     //  After creating a new appointment and adding it to event array, Array gets converted to a single number datatype by unforseen action which breaks code.
     //  This lifecycle converts it back to original array before rendering is triggered.
     componentWillUpdate(nextProps, nextState) {
-        // console.log( "Component will update", nextState.events, this.state.events)
         if (typeof nextState.events !== 'object' || nextState.events.constructor !== Array) {
             nextState.events = this.state.events;
         }
+    }
+
+    componentDidUpdate(prevState) {
+        // console.log("component DId Update - start Time", this.state.startTime)
+        // console.log("componendDidUpdate() - endTime", this.state.endTime )
     }
 
     //closes modals
@@ -44,30 +50,31 @@ class Calendar extends Component {
 
     //  Allows user to click on calendar slot and handles if appointment exists
     handleSlotSelected(slotInfo) {
-        // console.log(slotInfo)
-        var startDate = moment(slotInfo.start.toLocaleString('en-US')).format("MMMM DD YYYY");
-        var endDate = moment(slotInfo.end.toLocaleString('en-US')).format("MMMM DD YYYY");
-        this.setState({title:"", desc:""});
-        console.log("slotInfo", startDate)
-        console.log("events", this.state.events)
-        if(this.state.events.filter(e => e.start == startDate && e.end ==endDate).length > 0) {
-            swal("Appointment already exists!", "Click on appointment to view/edit event.")
-        } else
+        console.log("Real slotInfo", slotInfo)
         this.setState({
-            openSlot: true,
+            title:"", 
+            desc:"", 
+            start: "", 
+            end: ""});
+        // if(this.state.events.filter(e => e.start == startDate && e.end ==endDate).length > 0) {
+        //     swal("Appointment already exists!", "Click on appointment to view/edit event.")
+        // } else
+        this.setState({
             start: slotInfo.start,
-            end: slotInfo.end
+            end: slotInfo.end,
+            openSlot: true,
         });
     }
 
     handleEventSelected(event) {
-        // console.log("event", event) 
+        console.log("event", event) 
         this.setState({
             openEvent: true,
             clickedEvent: event,
             selectedEventTitle: event.title,
             selectedEventDescription: event.desc,
-            selectedEventStart: event.start
+            selectedEventStart: event.start,
+            selectedEventEnd: event.end
         })
     }
 
@@ -79,14 +86,22 @@ class Calendar extends Component {
         this.setState({ desc: e })
     }
 
+    handleStartTime = (event, date) => {
+        this.setState({start: date})
+    }
+
+    handleEndTime = (event, date) => {
+        this.setState({end: date})
+    }
+
     // Onclick callback function that pushes new appointment into events array.
     setNewAppointment() {
         // console.log("Fired")
         const { start, end, title, desc } = this.state;
         let appointment = {
             title,
-            start: moment(start.toLocaleString("en-US")).format("MMMM DD YYYY"),
-            end:  moment(end.toLocaleString("en-US")).format("MMMM DD YYYY"),
+            start,
+            end,
             desc
         }
         this.setState({ events: this.state.events.push(appointment) })
@@ -99,6 +114,8 @@ class Calendar extends Component {
         const updatedEvent = this.state.events.slice();
         updatedEvent[index].title = this.state.title;
         updatedEvent[index].desc = this.state.desc;
+        updatedEvent[index].start = this.state.start;
+        updatedEvent[index].end = this.state.end;
         this.setState({
             events: updatedEvent
         })
@@ -152,7 +169,7 @@ class Calendar extends Component {
             {/* react-big-calendar library utilized to render calendar*/}
                 <BigCalendar
                     events={this.state.events}
-                    views={["month", "week", "day"]}
+                    views={["month", "week", "day", "agenda"]}
                     timeslots={2}
                     defaultView='month'
                     defaultDate={new Date()}
@@ -170,14 +187,30 @@ class Calendar extends Component {
                     onRequestClose={this.handleClose}
                 >
                     <TextField
-                        hintText="Title"
+                        floatingLabelText="Title"
                         errorText="This field is required."
                         onChange={e => { this.setTitle(e.target.value) }}
                     />
                     <br />
                     <TextField
-                        hintText="Description"
+                        floatingLabelText="Description"
                         onChange={e => { this.setDescription(e.target.value) }}
+                    />
+                    <TimePicker
+                        format='ampm'
+                        floatingLabelText= "Start Time"
+                        errorText="Time is required."
+                        minutesStep={5}
+                        value={this.state.start}
+                        onChange={this.handleStartTime}
+                    />
+                    <TimePicker
+                        format='ampm'
+                        floatingLabelText= "End Time"
+                        errorText="Time is required."
+                        minutesStep={5}
+                        value={this.state.end}
+                        onChange={this.handleEndTime}
                     />
                 </Dialog>
 
@@ -191,13 +224,30 @@ class Calendar extends Component {
                 >
                     <TextField
                         defaultValue={this.state.selectedEventTitle}
-                        errorText="This field is required"
+                        floatingLabelText="Title"
                         onChange={e => { this.setTitle(e.target.value) }}
                     /><br />
                     <TextField
+                    floatingLabelText="Description"
                         multiLine={true}
                         defaultValue={this.state.selectedEventDescription}
                         onChange={e => { this.setDescription(e.target.value) }}
+                    />
+                     <TimePicker
+                        format='ampm'
+                        floatingLabelText="Start Time"
+                        hintText= {moment(this.state.selectedEventStart).format("MMMM Do YYYY")}
+                        minutesStep={5}
+                        value={this.state.start}
+                        onChange={this.handleStartTime}
+                    />
+                    <TimePicker
+                        format='ampm'
+                        floatingLabelText="End Time"
+                        hintText= {moment(this.state.selectedEventEnd).format("MMMM Do YYYY")}
+                        minutesStep={5}
+                        value={this.state.end}
+                        onChange={this.handleEndTime}
                     />
                 </Dialog>
             </div>
