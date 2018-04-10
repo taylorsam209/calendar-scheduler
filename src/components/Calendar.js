@@ -28,11 +28,11 @@ class Calendar extends Component {
 
     //  After creating a new appointment and adding it to event array, Array gets converted to a single number datatype by unforseen action which breaks code.
     //  This lifecycle converts it back to original array before rendering is triggered.
-    componentWillUpdate(nextProps, nextState) {
-        if (typeof nextState.events !== 'object' || nextState.events.constructor !== Array) {
-            nextState.events = this.state.events;
-        }
-    }
+    // componentWillUpdate(nextProps, nextState) {
+    //     if (typeof nextState.events !== 'object' || nextState.events.constructor !== Array) {
+    //         nextState.events = this.state.events;
+    //     }
+    // }
 
     //closes modals
     handleClose() {
@@ -83,7 +83,9 @@ class Calendar extends Component {
     setNewAppointment() {
         const { start, end, title, desc } = this.state;
         let appointment = { title, start, end, desc }
-        this.setState({ events: this.state.events.push(appointment) })
+        let events = this.state.events.slice();
+        events.push(appointment);
+        this.setState({events})
     }
 
     //  Updates Existing Appointments Title and/or Description
