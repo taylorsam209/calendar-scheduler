@@ -25,18 +25,18 @@ class Calendar extends Component {
     this.handleClose = this.handleClose.bind(this);
   }
 
-  componentDidMount(){
-      this.getCachedEvents();
-  }
+  // componentDidMount(){
+  //     this.getCachedEvents();
+  // }
 
-  getCachedEvents(){
-    const cachedEvents = localStorage.getItem("cachedEvents");
-    console.log("Cached Events", JSON.parse(cachedEvents));
-    if(cachedEvents){
-        this.setState({events: JSON.parse(cachedEvents)})
-    }
-    return;
-  }
+  // getCachedEvents(){
+  //   const cachedEvents = localStorage.getItem("cachedEvents");
+  //   console.log("Cached Events", JSON.parse(cachedEvents));
+  //   if(cachedEvents){
+  //       this.setState({events: JSON.parse(cachedEvents)})
+  //   }
+  //   return;
+  // }
 
   //closes modals
   handleClose() {
@@ -89,7 +89,7 @@ class Calendar extends Component {
     let appointment = { title, start, end, desc };
     let events = this.state.events.slice();
     events.push(appointment);
-    localStorage.setItem("cachedEvents", JSON.stringify(events));
+    // localStorage.setItem("cachedEvents", JSON.stringify(events));
     this.setState({ events });
   }
 
@@ -102,7 +102,7 @@ class Calendar extends Component {
     updatedEvent[index].desc = desc;
     updatedEvent[index].start = start;
     updatedEvent[index].end = end;
-    localStorage.setItem("cachedEvents", JSON.stringify(updatedEvent));
+    // localStorage.setItem("cachedEvents", JSON.stringify(updatedEvent));
     this.setState({
       events: updatedEvent
     });
@@ -113,7 +113,7 @@ class Calendar extends Component {
     let updatedEvents = this.state.events.filter(
       event => event["start"] !== this.state.start
     );
-    localStorage.setItem("cachedEvents", JSON.stringify(updatedEvents));
+    // localStorage.setItem("cachedEvents", JSON.stringify(updatedEvents));
     this.setState({ events: updatedEvents });
   }
 
